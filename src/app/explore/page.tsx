@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import { mockRestaurants } from "@/lib/mockData";
 import { 
   Star, 
   Clock, 
@@ -29,11 +30,16 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const cuisine = resolvedSearchParams.cuisine || "";
 
   // Fetch all restaurants and menu items to do filtering
-  const allRestaurants = await prisma.restaurant.findMany({
-    include: {
-      menuItems: true,
-    },
-  });
+  let allRestaurants;
+  try {
+    allRestaurants = await prisma.restaurant.findMany({
+      include: {
+        menuItems: true,
+      },
+    });
+  } catch {
+    allRestaurants = mockRestaurants;
+  }
 
   // Apply filters
   const filteredRestaurants = allRestaurants.filter((restaurant) => {

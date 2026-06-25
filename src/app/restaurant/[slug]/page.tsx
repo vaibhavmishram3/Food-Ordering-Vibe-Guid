@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { mockRestaurants } from "@/lib/mockData";
 import RestaurantClient from "./RestaurantClient";
 
 interface RestaurantPageProps {
@@ -11,19 +12,25 @@ export const dynamic = "force-dynamic";
 export default async function RestaurantPage({ params }: RestaurantPageProps) {
   const { slug } = await params;
 
-  // Fetch the restaurant and its menu items
-  const restaurant = await prisma.restaurant.findUnique({
-    where: { slug },
-    include: {
-      menuItems: true,
-    },
-  });
+  let restaurant;
+  try {
+    // Fetch the restaurant and its menu items
+    restaurant = await prisma.restaurant.findUnique({
+      where: { slug },
+      include: {
+        menuItems: true,
+      },
+    });
+  } catch {
+    // Fallback to mock data
+    restaurant = mockRestaurants.find(r => r.slug === slug);
+  }
 
   if (!restaurant) {
     notFound();
   }
 
-  // Serialize the database data for the client component
+  // Serialize the data for the client component
   const serializedRestaurant = {
     id: restaurant.id,
     name: restaurant.name,

@@ -1,14 +1,20 @@
 import { prisma } from "@/lib/prisma";
+import { mockRestaurants } from "@/lib/mockData";
 import OffersClient from "./OffersClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function OffersPage() {
-  const restaurants = await prisma.restaurant.findMany({
-    include: {
-      menuItems: true,
-    },
-  });
+  let restaurants;
+  try {
+    restaurants = await prisma.restaurant.findMany({
+      include: {
+        menuItems: true,
+      },
+    });
+  } catch {
+    restaurants = mockRestaurants;
+  }
 
   // Curate a set of promotional dishes (taking 1 from each restaurant)
   const promoItems = restaurants.flatMap((r: typeof restaurants[number]) =>

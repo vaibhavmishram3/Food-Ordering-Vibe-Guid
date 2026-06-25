@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { mockRestaurants } from "@/lib/mockData";
 import VibeGuideClient from "./VibeGuideClient";
 
 export const dynamic = "force-dynamic";
@@ -12,11 +13,16 @@ export default async function VibeGuidePage({
   const initialVibe = resolvedSearchParams.vibe || "spicy";
 
   // Fetch all restaurants and their menu items
-  const restaurants = await prisma.restaurant.findMany({
-    include: {
-      menuItems: true,
-    },
-  });
+  let restaurants;
+  try {
+    restaurants = await prisma.restaurant.findMany({
+      include: {
+        menuItems: true,
+      },
+    });
+  } catch {
+    restaurants = mockRestaurants;
+  }
 
   // Prepare a serialized data package for the client component
   const data = restaurants.map((r) => ({
