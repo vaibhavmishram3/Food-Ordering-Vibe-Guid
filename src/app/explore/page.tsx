@@ -20,6 +20,8 @@ interface ExplorePageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const resolvedSearchParams = await searchParams;
   const search = resolvedSearchParams.search || "";

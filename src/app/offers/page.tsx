@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import OffersClient from "./OffersClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OffersPage() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
@@ -9,8 +11,8 @@ export default async function OffersPage() {
   });
 
   // Curate a set of promotional dishes (taking 1 from each restaurant)
-  const promoItems = restaurants.flatMap((r) => 
-    r.menuItems.slice(0, 1).map((item) => ({
+  const promoItems = restaurants.flatMap((r: typeof restaurants[number]) =>
+    r.menuItems.slice(0, 1).map((item: typeof r.menuItems[number]) => ({
       id: item.id,
       name: item.name,
       description: item.description,

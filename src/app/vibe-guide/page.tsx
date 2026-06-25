@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import VibeGuideClient from "./VibeGuideClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function VibeGuidePage({
   searchParams,
 }: {
