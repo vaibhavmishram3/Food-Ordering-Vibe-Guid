@@ -3,6 +3,7 @@ import { mockRestaurants } from "@/lib/mockData";
 import VibeGuideClient from "./VibeGuideClient";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function VibeGuidePage({
   searchParams,
@@ -25,7 +26,7 @@ export default async function VibeGuidePage({
   }
 
   // Prepare a serialized data package for the client component
-  const data = restaurants.map((r) => ({
+  const data = restaurants.map((r: { id: any; name: any; slug: any; address: any; rating: any; coverImage: any; cuisine: any; deliveryTime: any; isPremium: any; menuItems: any; }) => ({
     id: r.id,
     name: r.name,
     slug: r.slug,
@@ -35,7 +36,7 @@ export default async function VibeGuidePage({
     cuisine: r.cuisine,
     deliveryTime: r.deliveryTime,
     isPremium: r.isPremium,
-    menuItems: r.menuItems.map((item) => ({
+    menuItems: r.menuItems.map((item: { id: any; name: any; description: any; price: any; category: any; isVeg: any; imageUrl: any; available: any; }) => ({
       id: item.id,
       name: item.name,
       description: item.description,

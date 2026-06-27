@@ -21,6 +21,33 @@ interface ExplorePageProps {
   }>;
 }
 
+// -------------------------------------------------------------------
+// Types
+// -------------------------------------------------------------------
+interface MenuItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  isVeg: boolean;
+  imageUrl: string;
+  available: boolean;
+}
+
+interface Restaurant {
+  id: number;
+  name: string;
+  slug: string;
+  address: string;
+  rating: number;
+  coverImage: string;
+  cuisine: string;
+  deliveryTime: number;
+  isPremium: boolean;
+  menuItems: MenuItem[];
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
@@ -30,19 +57,19 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const cuisine = resolvedSearchParams.cuisine || "";
 
   // Fetch all restaurants and menu items to do filtering
-  let allRestaurants;
+  let allRestaurants: Restaurant[];
   try {
     allRestaurants = await prisma.restaurant.findMany({
       include: {
         menuItems: true,
       },
-    });
+    }) as Restaurant[];
   } catch {
-    allRestaurants = mockRestaurants;
+    allRestaurants = mockRestaurants as unknown as Restaurant[];
   }
 
   // Apply filters
-  const filteredRestaurants = allRestaurants.filter((restaurant) => {
+  const filteredRestaurants = allRestaurants.filter((restaurant: Restaurant) => {
     // 1. Search Query Filter
     if (search.trim()) {
       const query = search.toLowerCase();

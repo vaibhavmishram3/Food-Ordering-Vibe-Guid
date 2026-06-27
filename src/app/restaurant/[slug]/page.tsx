@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import type { Restaurant, MenuItem } from "@prisma/client";
 import { mockRestaurants } from "@/lib/mockData";
 import RestaurantClient from "./RestaurantClient";
 
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function RestaurantPage({ params }: RestaurantPageProps) {
   const { slug } = await params;
 
-  let restaurant;
+  let restaurant: any = null;
   try {
     // Fetch the restaurant and its menu items
     restaurant = await prisma.restaurant.findUnique({
@@ -23,7 +24,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
     });
   } catch {
     // Fallback to mock data
-    restaurant = mockRestaurants.find(r => r.slug === slug);
+    restaurant = mockRestaurants.find(r => r.slug === slug) ?? null;
   }
 
   if (!restaurant) {
@@ -41,7 +42,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
     coverImage: restaurant.coverImage,
     deliveryTime: restaurant.deliveryTime,
     isPremium: restaurant.isPremium,
-    menuItems: restaurant.menuItems.map((item) => ({
+    menuItems: restaurant.menuItems.map((item: MenuItem) => ({
       id: item.id,
       name: item.name,
       description: item.description,

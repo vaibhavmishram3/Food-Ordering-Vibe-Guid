@@ -40,9 +40,13 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Sign up error:", error);
+    console.error("Sign up error details:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: "Internal server error", 
+        details: process.env.NODE_ENV === "development" ? errorMessage : undefined 
+      },
       { status: 500 }
     );
   }
