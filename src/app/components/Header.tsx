@@ -2,22 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
 import { useCart } from "@/context/CartContext";
-import { Utensils, ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Utensils, ShoppingBag, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
-  const { data: session } = useSession();
   const { cartCount } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Explore", href: "/explore" },
     { name: "Vibe Guide", href: "/vibe-guide" },
     { name: "Offers", href: "/offers" },
+    { name: "Profile", href: "/profile" },
   ];
 
   return (
@@ -25,12 +31,10 @@ export default function Header() {
       position: "sticky", 
       top: 0, 
       zIndex: 100, 
-      backgroundColor: "var(--glass-bg)", 
-      backdropFilter: "var(--glass-blur)",
-      WebkitBackdropFilter: "var(--glass-blur)",
-      borderBottom: "1px solid var(--border)"
+      backgroundColor: "rgba(18, 18, 22, 0.96)", 
+      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     }}>
-      <div className="container-custom, header-container" style={{ 
+      <div className="container-custom header-container" style={{ 
         display: "flex", 
         alignItems: "center", 
         justifyContent: "space-between", 
@@ -78,44 +82,11 @@ export default function Header() {
               </Link>
             );
           })}
-          {session && (
-            <Link 
-              href="/profile" 
-              style={{ 
-                color: pathname === "/profile" ? "var(--primary)" : "var(--text-muted)", 
-                textDecoration: "none",
-                transition: "color 0.2s ease"
-              }}
-              className="nav-link-hover"
-            >
-              Profile
-            </Link>
-          )}
         </nav>
 
         {/* Desktop Buttons: Auth and Cart */}
         <div style={{ display: "none", alignItems: "center", gap: "16px" }} className="desktop-buttons">
-          {session ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontSize: "0.9rem", color: "var(--text-main)" }}>
-                {session.user?.name || session.user?.email}
-              </span>
-              <button 
-                onClick={() => signOut()}
-                className="btn btn-secondary btn-sm" 
-                style={{ display: "flex", alignItems: "center", gap: "6px" }}
-              >
-                <LogOut size={16} />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          ) : (
-            <Link href="/signin" className="btn btn-secondary btn-sm" style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
-              <User size={16} />
-              <span>Sign In</span>
-            </Link>
-          )}
-          <Link href="/cart" className="btn btn-primary btn-sm" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+            <Link href="/cart" className="btn btn-primary btn-sm" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
             <ShoppingBag size={16} />
             <span>Cart ({cartCount})</span>
           </Link>
@@ -128,8 +99,11 @@ export default function Header() {
             <span>{cartCount}</span>
           </Link>
           <button 
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            style={{ background: "transparent", border: "none", color: "var(--text-main)", cursor: "pointer" }}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
+            style={{ background: "transparent", border: "none", color: "var(--text-main)", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", width: "40px", height: "40px", borderRadius: "999px" }}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -137,119 +111,87 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <>
-          {/* Backdrop */}
-          <div 
-            style={{ 
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.4)",
-              zIndex: 98
-            }} 
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: isMobileMenuOpen ? "rgba(0, 0, 0, 0.45)" : "transparent",
+          opacity: isMobileMenuOpen ? 1 : 0,
+          pointerEvents: isMobileMenuOpen ? "auto" : "none",
+          transition: "opacity 0.2s ease",
+          zIndex: 98
+        }}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      <div
+        style={{
+          position: "fixed",
+          top: "16px",
+          right: "16px",
+          width: "min(86vw, 320px)",
+          maxHeight: "calc(100vh - 32px)",
+          height: "fit-content",
+          background: "#14141b",
+          boxShadow: "var(--shadow-lg)",
+          transform: isMobileMenuOpen ? "translateX(0)" : "translateX(108%)",
+          transition: "transform 0.25s ease",
+          zIndex: 99,
+          padding: "24px 20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "24px",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+          overflow: "hidden"
+        }}
+        className="mobile-menu"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-main)" }}>Menu</span>
+          <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(false)}
-          />
-          {/* Menu */}
-          <div style={{ 
-            position: "fixed",
-            top: "72px",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(255, 255, 255, 0.3)",
-            backdropFilter: "var(--glass-blur)",
-            WebkitBackdropFilter: "var(--glass-blur)",
-            padding: "32px 24px",
-            zIndex: 99
-          }} className="mobile-menu">
-            <nav style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
-              return (
-                <Link 
-                  key={link.name} 
-                  href={link.href} 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{ 
-                    color: isActive ? "var(--primary)" : "var(--text-main)", 
-                    textDecoration: "none",
-                    fontSize: "1.35rem",
-                    fontWeight: 700,
-                    padding: "8px 0"
-                  }}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
-            {session && (
+            aria-label="Close navigation menu"
+            style={{ background: "transparent", border: "none", color: "var(--text-main)", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", width: "40px", height: "40px", borderRadius: "999px" }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <nav style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+            return (
               <Link 
-                key="profile" 
-                href="/profile" 
+                key={link.name} 
+                href={link.href} 
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{ 
-                  color: pathname === "/profile" ? "var(--primary)" : "var(--text-main)", 
+                  color: isActive ? "var(--primary)" : "var(--text-main)", 
                   textDecoration: "none",
-                  fontSize: "1.35rem",
+                  fontSize: "1.1rem",
                   fontWeight: 700,
-                  padding: "8px 0"
+                  padding: "12px 14px",
+                  borderRadius: "12px",
+                  background: isActive ? "rgb(34, 17, 12)" : "transparent"
                 }}
               >
-                Profile
+                {link.name}
               </Link>
-            )}
-          </nav>
-
-            <div style={{ marginTop: "48px", display: "flex", flexDirection: "column", gap: "20px" }}>
-              {session ? (
-                <>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <span style={{ fontSize: "1.1rem", color: "var(--text-main)", fontWeight: 600 }}>
-                      {session.user?.name || session.user?.email}
-                    </span>
-                    <button 
-                      onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                      className="btn btn-secondary" 
-                      style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "1rem", padding: "14px 24px" }}
-                    >
-                      <LogOut size={18} />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <Link 
-                  href="/signin" 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="btn btn-primary" 
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", textDecoration: "none", fontSize: "1rem", padding: "14px 24px" }}
-                >
-                  <User size={18} />
-                  <span>Sign In</span>
-                </Link>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+            );
+          })}
+        </nav>
+      </div>
 
       {/* Media queries injection */}
       <style dangerouslySetInnerHTML={{ __html: `
           .header-container { height: 72px !important; }
-          .mobile-menu { background-color: rgba(255, 255, 255, 0.3) !important; }
+          .mobile-menu { background: #14141b !important; }
           
           @media (min-width: 768px) {
             .header-container { height: 80px !important; }
             .desktop-nav { display: flex !important; }
             .desktop-buttons { display: flex !important; }
             .mobile-controls { display: none !important; }
-          }
-          
-          @media (prefers-color-scheme: dark) {
-            .mobile-menu { background-color: rgba(18, 18, 22, 0.3) !important; }
           }
           
           .nav-link-hover:hover {

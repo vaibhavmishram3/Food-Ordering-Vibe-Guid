@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useCart } from "@/context/CartContext";
 import { 
   ShoppingBag, 
@@ -21,8 +20,7 @@ import {
 
 export default function CartPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const { cart, updateQuantity, removeFromCart, cartTotal, setShowSignInPrompt } = useCart();
+  const { cart, updateQuantity, removeFromCart, cartTotal } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; freeDelivery: boolean } | null>(null);
   const [couponError, setCouponError] = useState("");
@@ -74,11 +72,6 @@ export default function CartPage() {
   // Store billing data for checkout in sessionStorage
   const handleProceedToCheckout = () => {
     if (cart.length === 0) return;
-    
-    if (!session) {
-      setShowSignInPrompt(true);
-      return;
-    }
     
     sessionStorage.setItem("food_vibe_order_totals", JSON.stringify({
       subtotal: cartTotal,

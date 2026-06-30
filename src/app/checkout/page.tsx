@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { useCart } from "@/context/CartContext";
 import { 
   MapPin, 
@@ -28,8 +27,7 @@ interface Totals {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const { cart, clearCart, setShowSignInPrompt } = useCart();
+  const { cart, clearCart } = useCart();
   const [totals, setTotals] = useState<Totals | null>(null);
 
   // Form states
@@ -58,14 +56,10 @@ export default function CheckoutPage() {
 
   // Redirect if cart is empty or user not signed in
   useEffect(() => {
-    if (!session) {
-      setShowSignInPrompt(true);
-      return;
-    }
     if (cart.length === 0 && paymentStep !== "success") {
       router.push("/cart");
     }
-  }, [cart, paymentStep, router, session, setShowSignInPrompt]);
+  }, [cart, paymentStep, router]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

@@ -233,20 +233,17 @@ export default function Home() {
         <div className="container-custom" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "24px" }}>
           <h2 style={{ color: "white", fontSize: "2.2rem" }}>Ready to Discover Your Next Food Vibe?</h2>
           <p style={{ color: "var(--text-muted)", maxWidth: "600px", fontSize: "1.1rem" }}>
-            Create an account to save your favorite vibes, customize recommendations, and secure faster payments with Razorpay integration.
+            Explore restaurants and order food instantly without signing in.
           </p>
           <div style={{ display: "flex", gap: "16px", marginTop: "12px", flexDirection: "column", width: "100%", maxWidth: "400px" }} className="promo-buttons">
-            <Link href="/signin" className="btn btn-primary btn-lg" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              Get Started
-            </Link>
-            <Link href="/explore" className="btn btn-secondary btn-lg" style={{ color: "var(--text-main)", textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              Browse Anonymously
+            <Link href="/explore" className="btn btn-primary btn-lg" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              Browse Restaurants
             </Link>
           </div>
           <style dangerouslySetInnerHTML={{ __html: `
             @media (min-width: 576px) {
               .promo-buttons { flex-direction: row !important; }
-              .promo-buttons link, .promo-buttons a { flex: 1; }
+              .promo-buttons a { flex: 1; }
             }
           `}} />
         </div>

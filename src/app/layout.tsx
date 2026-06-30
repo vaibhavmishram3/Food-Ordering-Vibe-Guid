@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
-import SessionProvider from "./components/SessionProvider";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { LayoutWrapper } from "./components/LayoutWrapper";
@@ -45,19 +44,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
-          <CartProvider>
-            <LayoutWrapper>
-              <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-                <Header />
-                <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                  {children}
-                </main>
-                <Footer />
-              </div>
-            </LayoutWrapper>
-          </CartProvider>
-        </SessionProvider>
+        <CartProvider>
+          <LayoutWrapper>
+            <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+              <Header />
+              <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </LayoutWrapper>
+        </CartProvider>
       </body>
     </html>
   );

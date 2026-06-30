@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 
 export interface CartItem {
   id: string;
@@ -21,8 +20,6 @@ interface CartContextType {
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
-  showSignInPrompt: boolean;
-  setShowSignInPrompt: (show: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -30,8 +27,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
-  const { data: session } = useSession();
 
   useEffect(() => {
     const savedCart = localStorage.getItem("food_vibe_cart");
@@ -52,10 +47,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [cart, isMounted]);
 
   const addToCart = (newItem: Omit<CartItem, "quantity">) => {
-    if (!session) {
-      setShowSignInPrompt(true);
-      return;
-    }
     setCart((prevCart) => {
       // Check if item is from a different restaurant
       if (prevCart.length > 0 && prevCart[0].restaurantId !== newItem.restaurantId) {
@@ -103,8 +94,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         cartTotal,
         cartCount,
-        showSignInPrompt,
-        setShowSignInPrompt,
       }}
     >
       {children}

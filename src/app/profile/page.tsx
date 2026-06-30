@@ -1,46 +1,17 @@
 "use client";
 
 import React from "react";
-import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { User, LogOut, Utensils, MapPin, Phone, Mail, Star } from "lucide-react";
+import { User, Utensils, MapPin, Mail, Star } from "lucide-react";
 
 export default function ProfilePage() {
-  const { data: session } = useSession();
-
-  if (!session) {
-    return (
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 20px", textAlign: "center" }}>
-        <div style={{ 
-          background: "var(--gradient-appetizer)", 
-          padding: "24px", 
-          borderRadius: "50%", 
-          color: "white", 
-          marginBottom: "24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}>
-          <User size={48} />
-        </div>
-        <h2>Sign In to View Your Profile</h2>
-        <p style={{ color: "var(--text-muted)", maxWidth: "400px", marginTop: "12px", marginBottom: "28px" }}>
-          Create an account or sign in to view your profile and order history.
-        </p>
-        <Link href="/signin" className="btn btn-primary btn-lg" style={{ textDecoration: "none", borderRadius: "12px" }}>
-          <span>Sign In</span>
-          <Utensils size={18} />
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div style={{ flex: 1, padding: "40px 0" }}>
       <div className="container-custom">
         <h1 style={{ marginBottom: "32px", display: "flex", alignItems: "center", gap: "10px" }}>
           <User size={32} className="text-gradient" />
-          My Profile
+          Profile
         </h1>
 
         <div style={{ 
@@ -64,11 +35,11 @@ export default function ProfilePage() {
                 fontSize: "2rem",
                 fontWeight: 800
               }}>
-                {session.user?.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                G
               </div>
               <div>
-                <h2 style={{ fontSize: "1.5rem", marginBottom: "4px" }}>{session.user?.name || "User"}</h2>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>{session.user?.email}</p>
+                <h2 style={{ fontSize: "1.5rem", marginBottom: "4px" }}>Guest User</h2>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>No sign-in required</p>
               </div>
             </div>
 
@@ -84,8 +55,8 @@ export default function ProfilePage() {
                   <Mail size={20} />
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>Email</p>
-                  <p style={{ fontSize: "1rem", color: "var(--text-main)" }}>{session.user?.email}</p>
+                  <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>Status</p>
+                  <p style={{ fontSize: "1rem", color: "var(--text-main)" }}>Browsing anonymously</p>
                 </div>
               </div>
 
@@ -107,14 +78,13 @@ export default function ProfilePage() {
             </div>
 
             <div style={{ marginTop: "32px" }}>
-              <button 
-                onClick={() => signOut()}
-                className="btn btn-secondary" 
-                style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+              <Link 
+                href="/explore"
+                className="btn btn-primary"
+                style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", textDecoration: "none" }}
               >
-                <LogOut size={18} />
-                <span>Sign Out</span>
-              </button>
+                <span>Explore Food</span>
+              </Link>
             </div>
           </div>
 
